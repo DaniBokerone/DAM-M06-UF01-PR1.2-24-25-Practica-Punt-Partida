@@ -1,8 +1,14 @@
 package com.project;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.project.excepcions.IOFitxerExcepcio;
 import com.project.objectes.PR122persona;
 
@@ -27,12 +33,39 @@ public class PR122main {
     // Mètode per serialitzar la llista de persones
     public static void serialitzarPersones(List<PR122persona> persones) throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
+        String camiFitxer = getFilePath();
+
+        try (FileOutputStream fos = new FileOutputStream(camiFitxer);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            oos.writeObject(persones);
+            System.out.println("Objecte serialitzat correctament a " + camiFitxer);
+
+        } catch (FileNotFoundException e) {
+            throw new IOFitxerExcepcio("Fitxer no trobat: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IOFitxerExcepcio("Error entrada/sortida: " + e.getMessage(), e);
+        }
     }
 
     // Mètode per deserialitzar la llista de persones
+    @SuppressWarnings("unchecked")
     public static List<PR122persona> deserialitzarPersones() throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
-        return new ArrayList(); // Substitueix pel teu
+        String camiFitxer = getFilePath();  
+        
+        try (FileInputStream fis = new FileInputStream(camiFitxer);
+            ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            return (List<PR122persona>) ois.readObject();
+
+        } catch (FileNotFoundException e) {
+            throw new IOFitxerExcepcio("Fitxer no trobat: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IOFitxerExcepcio("Error entrada/sortida: " + e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            throw new IOFitxerExcepcio("No s'ha trobat la classe: " + e.getMessage(), e);
+        }
     }
 
 

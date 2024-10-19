@@ -1,10 +1,10 @@
 package com.project;
 
-import com.project.excepcions.IOFitxerExcepcio;
-import com.project.utilitats.UtilsCSV;
-
 import java.util.List;
 import java.util.Scanner;
+
+import com.project.excepcions.IOFitxerExcepcio;
+import com.project.utilitats.UtilsCSV;
 
 public class PR123mainTreballadors {
     private String filePath = System.getProperty("user.dir") + "/data/PR123treballadors.csv";
@@ -59,6 +59,26 @@ public class PR123mainTreballadors {
     // Mètode per mostrar els treballadors llegint el fitxer CSV
     public void mostrarTreballadors() throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
+        String camiFitxer = getFilePath();
+    
+        List<String> csv = UtilsCSV.llegir(camiFitxer);
+        
+        if (csv == null || csv.isEmpty()) {
+            throw new IOFitxerExcepcio("El fitxer CSV està buit o no s'ha pogut llegir.");
+        }
+    
+        String[] columnes = UtilsCSV.obtenirClaus(csv);
+        
+        for (int i = 1; i < csv.size(); i++) {  
+            String fila = csv.get(i);
+            String[] dades = UtilsCSV.obtenirArrayLinia(fila); 
+    
+            System.out.println("Treballador: ");
+            for (int j = 0; j < columnes.length; j++) {
+                System.out.println(columnes[j] + ": " + dades[j]);  
+            }
+            System.out.println();  
+        }
     }
 
     // Mètode per modificar un treballador (interactiu)
@@ -82,6 +102,16 @@ public class PR123mainTreballadors {
     // Mètode que modifica treballador (per a tests i usuaris) llegint i escrivint sobre disc
     public void modificarTreballador(String id, String columna, String nouValor) throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
+        List<String> treballadorsCSV = llegirFitxerCSV();
+
+        int liniaTreballador = UtilsCSV.obtenirNumLinia(treballadorsCSV, "Id", id);
+        if (liniaTreballador == -1) {
+            System.out.println("No s'ha trobat el treballador");
+        }else{
+            UtilsCSV.actualitzarLinia(treballadorsCSV, liniaTreballador, columna, nouValor);
+    
+            escriureFitxerCSV(treballadorsCSV);
+        }
     }
 
     // Encapsulació de llegir el fitxer CSV

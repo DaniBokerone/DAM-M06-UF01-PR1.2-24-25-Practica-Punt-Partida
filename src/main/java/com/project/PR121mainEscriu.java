@@ -1,8 +1,10 @@
 package com.project;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+
 import com.project.excepcions.IOFitxerExcepcio;
 import com.project.objectes.PR121hashmap;
 
@@ -34,5 +36,18 @@ public class PR121mainEscriu {
 
     public static void serialitzarHashMap(PR121hashmap hashMap) throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
+        String camiFitxer = getFilePath();
+
+        try (FileOutputStream fos = new FileOutputStream(camiFitxer);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            oos.writeObject(hashMap);
+            System.out.println("Objecte serialitzat correctament a " + camiFitxer);
+
+        } catch (FileNotFoundException e) {
+            throw new IOFitxerExcepcio("Fitxer no trobat: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IOFitxerExcepcio("Error entrada/sortida: " + e.getMessage(), e);
+        }
     }
 }

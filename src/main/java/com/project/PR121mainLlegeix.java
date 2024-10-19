@@ -1,8 +1,10 @@
 package com.project;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+
 import com.project.excepcions.IOFitxerExcepcio;
 import com.project.objectes.PR121hashmap;
 
@@ -20,7 +22,20 @@ public class PR121mainLlegeix {
 
     public static PR121hashmap deserialitzarHashMap() throws IOFitxerExcepcio {
         // *************** CODI PRÀCTICA **********************/
-        return new PR121hashmap(); // Substitueix pel teu
+        String camiFitxer = getFilePath();  
+        
+        try (FileInputStream fis = new FileInputStream(camiFitxer);
+            ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            return (PR121hashmap) ois.readObject();
+
+        } catch (FileNotFoundException e) {
+            throw new IOFitxerExcepcio("Error en deserialitzar l'objecte HashMap - Fitxer no trobat: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IOFitxerExcepcio("Error en deserialitzar l'objecte HashMap - Error entrada/sortida: " + e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            throw new IOFitxerExcepcio("Error en deserialitzar l'objecte HashMap - No s'ha trobat la classe: " + e.getMessage(), e);
+        }
     }
 
     // Getter
